@@ -14,6 +14,11 @@ import {
   Home,
   LayoutDashboard,
   CalendarCheck,
+  Sun,
+  Moon,
+  Users,
+  Search,
+  BookPlus,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -25,6 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [userIsAdmin, setUserIsAdmin] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,6 +45,20 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' || 'dark';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
 
   useEffect(() => {
     if (session) {
@@ -95,6 +115,13 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
     <Home className="w-5 h-5 mr-3" />
     Home
   </Link>
+  <button
+    onClick={toggleTheme}
+    className="text-white hover:text-primary transition-colors flex items-center"
+    aria-label="Toggle theme"
+  >
+    {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+  </button>
   {session ? (
     <>
       <Link
@@ -110,6 +137,27 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
       >
         <CalendarCheck className="w-5 h-5 mr-3" />
         Book a Seat
+      </Link>
+      <Link
+        to="/community"
+        className="text-white hover:text-primary transition-colors flex items-center"
+      >
+        <Users className="w-5 h-5 mr-3" />
+        Community
+      </Link>
+      <Link
+        to="/book-search"
+        className="text-white hover:text-primary transition-colors flex items-center"
+      >
+        <Search className="w-5 h-5 mr-3" />
+        Books
+      </Link>
+      <Link
+        to="/book-request"
+        className="text-white hover:text-primary transition-colors flex items-center"
+      >
+        <BookPlus className="w-5 h-5 mr-3" />
+        Request
       </Link>
       {userIsAdmin && (
         <Link
@@ -182,6 +230,25 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
             >
               Home
             </Link>
+            <button
+              onClick={() => {
+                toggleTheme();
+                setIsOpen(false);
+              }}
+              className="text-left text-white hover:text-primary transition-colors flex items-center"
+            >
+              {theme === 'dark' ? (
+                <>
+                  <Sun className="w-5 h-5 mr-2" />
+                  Light Mode
+                </>
+              ) : (
+                <>
+                  <Moon className="w-5 h-5 mr-2" />
+                  Dark Mode
+                </>
+              )}
+            </button>
             {session ? (
               <>
                 <Link
@@ -197,6 +264,27 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                   onClick={() => setIsOpen(false)}
                 >
                   Book a Seat
+                </Link>
+                <Link
+                  to="/community"
+                  className="text-white hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Community
+                </Link>
+                <Link
+                  to="/book-search"
+                  className="text-white hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Search Books
+                </Link>
+                <Link
+                  to="/book-request"
+                  className="text-white hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Request Book
                 </Link>
                 {userIsAdmin && (
                   <Link

@@ -11,8 +11,11 @@ const SeatBooking: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [bookingType, setBookingType] = useState<'2hours' | '4hours' | 'custom'>('2hours');
-  const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  const [bookingDate, setBookingDate] = useState<string>('');
+  const [startHour, setStartHour] = useState<string>('');
+  const [startMinute, setStartMinute] = useState<string>('');
+  const [endHour, setEndHour] = useState<string>('');
+  const [endMinute, setEndMinute] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -54,11 +57,11 @@ const SeatBooking: React.FC = () => {
         setSeats(seatsData || []);
 
         // Fetch current bookings
-        const now = new Date().toISOString();
+        const currentTime = new Date().toISOString();
         const { data: bookingsData, error: bookingsError } = await supabase
           .from('bookings')
           .select('*')
-          .gte('end_time', now);
+          .gte('end_time', currentTime);
         
         if (bookingsError) throw bookingsError;
         setBookings(bookingsData || []);
@@ -69,36 +72,45 @@ const SeatBooking: React.FC = () => {
           setUserBookings(userBookings);
         }
 
-        // Set default times within operating hours
-        const currentDate = new Date();
+        // Set default to current time
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
         
-        // Ensure start time is within operating hours
-        let defaultStartTime = new Date(currentDate);
-        defaultStartTime.setMinutes(Math.ceil(defaultStartTime.getMinutes() / 15) * 15);
+        // Set today's date
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        setBookingDate(`${year}-${month}-${day}`);
         
-        // If current time is before opening, set to opening time
-        if (defaultStartTime.getHours() < OPENING_HOUR) {
-          defaultStartTime.setHours(OPENING_HOUR, 0, 0, 0);
+        // Set current time or opening time
+        if (currentHour < OPENING_HOUR) {
+          setStartHour(String(OPENING_HOUR));
+          setStartMinute('00');
+          setEndHour(String(OPENING_HOUR + 2));
+          setEndMinute('00');
+        } else if (currentHour >= CLOSING_HOUR) {
+          // Next day
+          const tomorrow = new Date(now);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const tomorrowYear = tomorrow.getFullYear();
+          const tomorrowMonth = String(tomorrow.getMonth() + 1).padStart(2, '0');
+          const tomorrowDay = String(tomorrow.getDate()).padStart(2, '0');
+          setBookingDate(`${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`);
+          setStartHour(String(OPENING_HOUR));
+          setStartMinute('00');
+          setEndHour(String(OPENING_HOUR + 2));
+          setEndMinute('00');
+        } else {
+          // Use current time
+          setStartHour(String(currentHour));
+          setStartMinute(String(currentMinute).padStart(2, '0'));
+          
+          // End time 2 hours later
+          const endHourValue = Math.min(currentHour + 2, CLOSING_HOUR);
+          setEndHour(String(endHourValue));
+          setEndMinute(String(currentMinute).padStart(2, '0'));
         }
-        
-        // If current time is after closing, set to next day opening
-        if (defaultStartTime.getHours() >= CLOSING_HOUR) {
-          defaultStartTime.setDate(defaultStartTime.getDate() + 1);
-          defaultStartTime.setHours(OPENING_HOUR, 0, 0, 0);
-        }
-        
-        // Calculate end time (2 hours later by default)
-        let defaultEndTime = new Date(defaultStartTime);
-        defaultEndTime.setHours(defaultEndTime.getHours() + 2);
-        
-        // If end time exceeds closing time, cap at closing time
-        if (defaultEndTime.getHours() >= CLOSING_HOUR || 
-            (defaultEndTime.getHours() === CLOSING_HOUR - 1 && defaultEndTime.getMinutes() > 0)) {
-          defaultEndTime.setHours(CLOSING_HOUR, 0, 0, 0);
-        }
-        
-        setStartTime(formatDateTimeForInput(defaultStartTime));
-        setEndTime(formatDateTimeForInput(defaultEndTime));
       } catch (error: any) {
         toast.error(error.message || 'Failed to load seat data');
       } finally {
@@ -109,8 +121,16 @@ const SeatBooking: React.FC = () => {
     fetchData();
   }, []);
 
-  const formatDateTimeForInput = (date: Date): string => {
-    return date.toISOString().slice(0, 16);
+  const getStartDateTime = (): Date => {
+    const date = new Date(bookingDate);
+    date.setHours(parseInt(startHour) || 0, parseInt(startMinute) || 0, 0, 0);
+    return date;
+  };
+
+  const getEndDateTime = (): Date => {
+    const date = new Date(bookingDate);
+    date.setHours(parseInt(endHour) || 0, parseInt(endMinute) || 0, 0, 0);
+    return date;
   };
 
   const handleSeatSelect = (seatId: string) => {
@@ -120,47 +140,21 @@ const SeatBooking: React.FC = () => {
   const handleBookingTypeChange = (type: '2hours' | '4hours' | 'custom') => {
     setBookingType(type);
     
-    // Get current date
-    const currentDate = new Date();
+    if (type === 'custom') return;
     
-    // Set a default start time within operating hours
-    let newStartTime = new Date(currentDate);
-    newStartTime.setMinutes(Math.ceil(newStartTime.getMinutes() / 15) * 15);
+    const hours = type === '2hours' ? 2 : 4;
+    const currentStartHour = parseInt(startHour) || 0;
+    const newEndHour = Math.min(currentStartHour + hours, CLOSING_HOUR);
     
-    // If current time is before opening, set to opening time
-    if (newStartTime.getHours() < OPENING_HOUR) {
-      newStartTime.setHours(OPENING_HOUR, 0, 0, 0);
-    }
-    
-    // If current time is after closing, set to next day opening
-    if (newStartTime.getHours() >= CLOSING_HOUR) {
-      newStartTime.setDate(newStartTime.getDate() + 1);
-      newStartTime.setHours(OPENING_HOUR, 0, 0, 0);
-    }
-    
-    // Calculate end time based on booking type
-    let newEndTime = new Date(newStartTime);
-    
-    if (type === '2hours') {
-      newEndTime.setHours(newEndTime.getHours() + 2);
-    } else if (type === '4hours') {
-      newEndTime.setHours(newEndTime.getHours() + 4);
-    }
-    
-    // If end time exceeds closing time, cap at closing time
-    if (newEndTime.getHours() >= CLOSING_HOUR || 
-        (newEndTime.getHours() === CLOSING_HOUR - 1 && newEndTime.getMinutes() > 0)) {
-      newEndTime.setHours(CLOSING_HOUR, 0, 0, 0);
-    }
-    
-    setStartTime(formatDateTimeForInput(newStartTime));
-    setEndTime(formatDateTimeForInput(newEndTime));
+    setEndHour(String(newEndHour));
+    setEndMinute(startMinute);
   };
 
   const isSeatAvailable = (seatId: string): boolean => {
-    // Check if the seat is already booked during the selected time
-    const selectedStart = new Date(startTime).getTime();
-    const selectedEnd = new Date(endTime).getTime();
+    if (!bookingDate || !startHour || !endHour) return true;
+    
+    const selectedStart = getStartDateTime().getTime();
+    const selectedEnd = getEndDateTime().getTime();
     
     return !bookings.some(booking => {
       if (booking.seat_id !== seatId) return false;
@@ -168,7 +162,6 @@ const SeatBooking: React.FC = () => {
       const bookingStart = new Date(booking.start_time).getTime();
       const bookingEnd = new Date(booking.end_time).getTime();
       
-      // Check if there's an overlap
       return (
         (selectedStart >= bookingStart && selectedStart < bookingEnd) ||
         (selectedEnd > bookingStart && selectedEnd <= bookingEnd) ||
@@ -181,9 +174,9 @@ const SeatBooking: React.FC = () => {
     return userBookings.some(booking => booking.seat_id === seatId);
   };
 
-  const calculatePrice = (startTime: string, endTime: string): number => {
-    const start = new Date(startTime);
-    const end = new Date(endTime);
+  const calculatePrice = (): number => {
+    const start = getStartDateTime();
+    const end = getEndDateTime();
     const hours = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60));
     return hours * 60; // 60 rubles per hour
   };
@@ -223,13 +216,13 @@ const SeatBooking: React.FC = () => {
       return;
     }
     
-    if (!startTime || !endTime) {
-      toast.error('Please select start and end times');
+    if (!bookingDate || !startHour || !endHour) {
+      toast.error('Please enter booking date and time');
       return;
     }
     
-    const start = new Date(startTime);
-    const end = new Date(endTime);
+    const start = getStartDateTime();
+    const end = getEndDateTime();
     
     // Validate booking time
     const validation = validateBookingTime(start, end);
@@ -238,9 +231,8 @@ const SeatBooking: React.FC = () => {
       return;
     }
     
-
     // Calculate price
-    const price = calculatePrice(startTime, endTime);
+    const price = calculatePrice();
     const seatNumber = seats.find(seat => seat.id === selectedSeat)?.seat_number || 'Unknown Seat';
     
     setProcessingPayment(true);
@@ -248,18 +240,18 @@ const SeatBooking: React.FC = () => {
     try {
       // Initiate Razorpay payment
       const paymentResponse = await initiateRazorpayPayment({
-        amount: price * 100, // Convert to paise (1 ruble = 100 paise for this example)
+        amount: price * 100,
         currency: 'INR',
         name: 'Mo-Library',
-        description: `Booking for ${seatNumber} from ${new Date(startTime).toLocaleString()} to ${new Date(endTime).toLocaleString()}`,
+        description: `Booking for ${seatNumber} from ${start.toLocaleString()} to ${end.toLocaleString()}`,
         prefill: {
           name: userProfile?.full_name || '',
           email: userProfile?.email || '',
         },
         notes: {
           seat_id: selectedSeat,
-          start_time: startTime,
-          end_time: endTime
+          start_time: start.toISOString(),
+          end_time: end.toISOString()
         },
         theme: {
           color: '#8b5cf6'
@@ -419,12 +411,12 @@ const SeatBooking: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Duration
+                  Quick Duration
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={() => handleBookingTypeChange('2hours')}
-                    className={`p-2 rounded-md text-sm text-center transition-colors ${
+                    className={`p-3 rounded-md text-sm font-medium transition-all ${
                       bookingType === '2hours'
                         ? 'gradient-bg text-white'
                         : 'bg-background-light hover:bg-gray-700 text-gray-300'
@@ -434,7 +426,7 @@ const SeatBooking: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleBookingTypeChange('4hours')}
-                    className={`p-2 rounded-md text-sm text-center transition-colors ${
+                    className={`p-3 rounded-md text-sm font-medium transition-all ${
                       bookingType === '4hours'
                         ? 'gradient-bg text-white'
                         : 'bg-background-light hover:bg-gray-700 text-gray-300'
@@ -444,7 +436,7 @@ const SeatBooking: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleBookingTypeChange('custom')}
-                    className={`p-2 rounded-md text-sm text-center transition-colors ${
+                    className={`p-3 rounded-md text-sm font-medium transition-all ${
                       bookingType === 'custom'
                         ? 'gradient-bg text-white'
                         : 'bg-background-light hover:bg-gray-700 text-gray-300'
@@ -456,44 +448,107 @@ const SeatBooking: React.FC = () => {
               </div>
               
               <div>
-                <label htmlFor="startTime" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="bookingDate" className="block text-sm font-medium text-gray-300 mb-2">
+                  Date
+                </label>
+                <input
+                  id="bookingDate"
+                  type="date"
+                  value={bookingDate}
+                  onChange={(e) => setBookingDate(e.target.value)}
+                  className="block w-full px-4 py-3 rounded-md bg-background-light border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary text-white text-lg"
+                  min={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Start Time
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Calendar className="h-5 w-5 text-gray-400" />
-                  </div>
+                <div className="flex gap-2">
                   <input
-                    id="startTime"
-                    type="datetime-local"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 rounded-md bg-background-light border border-gray-700 focus:ring-primary focus:border-primary text-white"
-                    min={formatDateTimeForInput(new Date())}
+                    type="number"
+                    placeholder="HH"
+                    value={startHour}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 23)) {
+                        setStartHour(val);
+                        if (bookingType !== 'custom' && val) {
+                          const hours = bookingType === '2hours' ? 2 : 4;
+                          const newEndHour = Math.min(parseInt(val) + hours, CLOSING_HOUR);
+                          setEndHour(String(newEndHour));
+                        }
+                      }
+                    }}
+                    min="0"
+                    max="23"
+                    className="flex-1 px-4 py-3 rounded-md bg-background-light border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary text-white text-lg text-center"
+                  />
+                  <span className="text-2xl text-gray-400 flex items-center">:</span>
+                  <input
+                    type="number"
+                    placeholder="MM"
+                    value={startMinute}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 59)) {
+                        setStartMinute(val);
+                        if (bookingType !== 'custom') {
+                          setEndMinute(val);
+                        }
+                      }
+                    }}
+                    min="0"
+                    max="59"
+                    className="flex-1 px-4 py-3 rounded-md bg-background-light border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary text-white text-lg text-center"
                   />
                 </div>
                 <p className="mt-1 text-xs text-gray-400">
-                  Library hours: {formatTimeDisplay(OPENING_HOUR)} - {formatTimeDisplay(CLOSING_HOUR)}
+                  Library: {OPENING_HOUR}:00 - {CLOSING_HOUR}:00
                 </p>
               </div>
               
               <div>
-                <label htmlFor="endTime" className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   End Time
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Clock className="h-5 w-5 text-gray-400" />
-                  </div>
+                <div className="flex gap-2">
                   <input
-                    id="endTime"
-                    type="datetime-local"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 rounded-md bg-background-light border border-gray-700 focus:ring-primary focus:border-primary text-white"
-                    min={startTime}
+                    type="number"
+                    placeholder="HH"
+                    value={endHour}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 23)) {
+                        setEndHour(val);
+                      }
+                    }}
+                    min="0"
+                    max="23"
+                    className="flex-1 px-4 py-3 rounded-md bg-background-light border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary text-white text-lg text-center"
+                  />
+                  <span className="text-2xl text-gray-400 flex items-center">:</span>
+                  <input
+                    type="number"
+                    placeholder="MM"
+                    value={endMinute}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 59)) {
+                        setEndMinute(val);
+                      }
+                    }}
+                    min="0"
+                    max="59"
+                    className="flex-1 px-4 py-3 rounded-md bg-background-light border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary text-white text-lg text-center"
                   />
                 </div>
+                <p className="mt-1 text-xs text-gray-400">
+                  {startHour && endHour && (
+                    <>Duration: {Math.abs(parseInt(endHour) - parseInt(startHour))} hours {Math.abs(parseInt(endMinute || '0') - parseInt(startMinute || '0'))} min</>
+                  )}
+                </p>
               </div>
               
               {selectedSeat ? (
@@ -504,11 +559,15 @@ const SeatBooking: React.FC = () => {
                       Seat {seats.find(seat => seat.id === selectedSeat)?.seat_number.replace('Seat ', '')} selected
                     </p>
                     <p className="text-xs text-gray-300 mt-1">
-                      Ready to book for {new Date(startTime).toLocaleString()} to {new Date(endTime).toLocaleString()}
+                      {bookingDate && startHour && endHour && (
+                        <>
+                          {bookingDate} at {startHour}:{startMinute || '00'} - {endHour}:{endMinute || '00'}
+                        </>
+                      )}
                     </p>
-                    {startTime && endTime && (
+                    {bookingDate && startHour && endHour && (
                       <p className="text-sm font-medium text-primary mt-2">
-                        Price: ₹{calculatePrice(startTime, endTime)}
+                        Price: ₹{calculatePrice()}
                       </p>
                     )}
                   </div>

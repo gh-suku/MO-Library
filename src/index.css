@@ -9,6 +9,17 @@
   --background: #0f0f1a;
   --foreground: #f8fafc;
   --accent: #f472b6;
+  --background-light: #1a1a2e;
+}
+
+[data-theme="light"] {
+  --primary: #7c3aed;
+  --primary-dark: #6d28d9;
+  --secondary: #db2777;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --accent: #ec4899;
+  --background-light: #e2e8f0;
 }
 
 body {
@@ -52,6 +63,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+[data-theme="light"] .glass-effect {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 .neon-shadow {
   box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
 }
@@ -69,8 +85,18 @@ body {
   border: 1px solid var(--primary);
 }
 
+[data-theme="light"] .seat.available {
+  background-color: rgba(124, 58, 237, 0.15);
+  border: 1px solid var(--primary);
+}
+
 .seat.booked {
   background-color: rgba(236, 72, 153, 0.2);
+  border: 1px solid var(--secondary);
+}
+
+[data-theme="light"] .seat.booked {
+  background-color: rgba(219, 39, 119, 0.15);
   border: 1px solid var(--secondary);
 }
 
@@ -80,8 +106,18 @@ body {
   transform: translateY(-5px);
 }
 
+[data-theme="light"] .seat.selected {
+  background-color: rgba(124, 58, 237, 0.3);
+  border: 2px solid var(--primary);
+}
+
 .seat.your-booking {
   background-color: rgba(244, 114, 182, 0.3);
+  border: 2px solid var(--accent);
+}
+
+[data-theme="light"] .seat.your-booking {
+  background-color: rgba(236, 72, 153, 0.2);
   border: 2px solid var(--accent);
 }
 
@@ -125,4 +161,75 @@ body {
   to {
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.8), 0 0 30px rgba(236, 72, 153, 0.6);
   }
+}
+
+/* Light theme input styling */
+[data-theme="light"] input[type="datetime-local"] {
+  color: var(--foreground);
+  background-color: var(--background-light);
+}
+
+[data-theme="light"] input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* Better datetime input styling */
+input[type="datetime-local"] {
+  cursor: pointer;
+  font-size: 16px; /* Prevents zoom on mobile */
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  background-color: rgba(139, 92, 246, 0.2);
+}
+
+/* Smooth transitions for theme changes */
+body, .glass-effect, .seat {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Better text visibility in light mode */
+[data-theme="light"] .text-gray-300 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .text-gray-400 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .text-white {
+  color: var(--foreground) !important;
+}
+
+[data-theme="light"] .bg-background-light {
+  background-color: var(--background-light) !important;
+}
+
+[data-theme="light"] .border-gray-700 {
+  border-color: #cbd5e1 !important;
+}
+
+/* Number input styling - remove spinner arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Better focus states for time inputs */
+input[type="number"]:focus,
+input[type="date"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
 }

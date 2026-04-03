@@ -6,6 +6,7 @@ import { Session } from '@supabase/supabase-js';
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import Home from './pages/Home';
@@ -24,6 +25,9 @@ import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsConditions from './pages/TermsConditions';
 import RefundPolicy from './pages/RefundPolicy';
+import Community from './pages/Community';
+import BookSearch from './pages/BookSearch';
+import BookRequest from './pages/BookRequest';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -56,6 +60,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <Navbar session={session} />
       <main className="flex-grow">
         <Routes>
@@ -68,6 +73,9 @@ function App() {
           <Route path="/seat-booking" element={session ? <SeatBooking /> : <Navigate to="/login" />} />
           <Route path="/profile" element={session ? <Profile /> : <Navigate to="/login" />} />
           <Route path="/admin" element={session ? <Admin /> : <Navigate to="/login" />} />
+          <Route path="/community" element={session ? <Community /> : <Navigate to="/login" />} />
+          <Route path="/book-search" element={session ? <BookSearch /> : <Navigate to="/login" />} />
+          <Route path="/book-request" element={<BookRequest />} />
           
           {/* Legal and Info Pages */}
           <Route path="/about-us" element={<AboutUs />} />

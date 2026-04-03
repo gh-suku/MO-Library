@@ -32,8 +32,59 @@ export type Booking = {
   start_time: string;
   end_time: string;
   created_at: string;
+  payment_id?: string | null;
+  amount_paid?: number | null;
   seat?: Seat;
   profile?: Profile;
+};
+
+export type Book = {
+  id: string;
+  title: string;
+  author: string;
+  isbn?: string | null;
+  is_available: boolean;
+  total_copies: number;
+  available_copies: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CommunityPost = {
+  id: string;
+  user_id: string;
+  content: string;
+  book_title?: string | null;
+  duration_days?: number | null;
+  created_at: string;
+  updated_at: string;
+  profile?: Profile;
+  likes_count?: number;
+  comments_count?: number;
+  user_has_liked?: boolean;
+};
+
+export type PostComment = {
+  id: string;
+  post_id: string;
+  user_id: string;
+  parent_comment_id?: string | null;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  profile?: Profile;
+  replies?: PostComment[];
+};
+
+export type BookRequest = {
+  id: string;
+  requester_name: string;
+  requester_email: string;
+  book_title: string;
+  author: string;
+  additional_info?: string | null;
+  status: string;
+  created_at: string;
 };
 
 export const isAdmin = async (): Promise<boolean> => {
