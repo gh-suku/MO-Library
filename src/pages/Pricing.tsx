@@ -41,7 +41,7 @@ const Pricing: React.FC = () => {
                 <Clock className="w-12 h-12 text-primary mx-auto mb-4" />
                 <h3 className="text-xl font-bold">Hourly Rate</h3>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">₹60</span>
+                  <span className="text-4xl font-bold">₹5</span>
                   <span className="text-gray-300 ml-2">/ hour</span>
                 </div>
               </div>
@@ -84,7 +84,7 @@ const Pricing: React.FC = () => {
                 <Calendar className="w-12 h-12 text-primary mx-auto mb-4" />
                 <h3 className="text-xl font-bold">Day Pass</h3>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">₹400</span>
+                  <span className="text-4xl font-bold">₹40</span>
                   <span className="text-gray-300 ml-2">/ day</span>
                 </div>
               </div>
@@ -127,7 +127,7 @@ const Pricing: React.FC = () => {
                 <CreditCard className="w-12 h-12 text-primary mx-auto mb-4" />
                 <h3 className="text-xl font-bold">Weekly Pass</h3>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">₹2,000</span>
+                  <span className="text-4xl font-bold">₹280</span>
                   <span className="text-gray-300 ml-2">/ week</span>
                 </div>
               </div>
