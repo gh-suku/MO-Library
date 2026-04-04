@@ -178,7 +178,7 @@ const SeatBooking: React.FC = () => {
     const start = getStartDateTime();
     const end = getEndDateTime();
     const hours = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60));
-    return hours * 60; // 60 rubles per hour
+    return hours * 5; // 5 rupees per hour
   };
 
   const validateBookingTime = (start: Date, end: Date): { valid: boolean; message?: string } => {
@@ -608,7 +608,7 @@ const SeatBooking: React.FC = () => {
                   <li>• You can cancel a booking up to 1 hour before start time</li>
                   <li>• Please arrive on time for your booking</li>
                   <li>• Payment is processed securely via Razorpay</li>
-                  <li>• Rate: ₹60 per hour (or part thereof)</li>
+                  <li>• Rate: ₹5 per hour (or part thereof)</li>
                 </ul>
               </div>
             </div>

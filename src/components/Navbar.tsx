@@ -107,17 +107,17 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-4">
   <Link
     to="/"
     className="text-white hover:text-primary transition-colors flex items-center"
   >
-    <Home className="w-5 h-5 mr-3" />
+    <Home className="w-5 h-5 mr-1" />
     Home
   </Link>
   <button
     onClick={toggleTheme}
-    className="text-white hover:text-primary transition-colors flex items-center"
+    className="text-white hover:text-primary transition-colors flex items-center p-2"
     aria-label="Toggle theme"
   >
     {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -128,35 +128,35 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
         to="/dashboard"
         className="text-white hover:text-primary transition-colors flex items-center"
       >
-        <LayoutDashboard className="w-5 h-5 mr-3" />
+        <LayoutDashboard className="w-5 h-5 mr-1" />
         Dashboard
       </Link>
       <Link
         to="/seat-booking"
         className="text-white hover:text-primary transition-colors flex items-center"
       >
-        <CalendarCheck className="w-5 h-5 mr-3" />
-        Book a Seat
+        <CalendarCheck className="w-5 h-5 mr-1" />
+        Seats
       </Link>
       <Link
         to="/community"
         className="text-white hover:text-primary transition-colors flex items-center"
       >
-        <Users className="w-5 h-5 mr-3" />
+        <Users className="w-5 h-5 mr-1" />
         Community
       </Link>
       <Link
         to="/book-search"
         className="text-white hover:text-primary transition-colors flex items-center"
       >
-        <Search className="w-5 h-5 mr-3" />
+        <Search className="w-5 h-5 mr-1" />
         Books
       </Link>
       <Link
         to="/book-request"
         className="text-white hover:text-primary transition-colors flex items-center"
       >
-        <BookPlus className="w-5 h-5 mr-3" />
+        <BookPlus className="w-5 h-5 mr-1" />
         Request
       </Link>
       {userIsAdmin && (
@@ -164,29 +164,27 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
           to="/admin"
           className="text-white hover:text-primary transition-colors flex items-center"
         >
-          <Shield className="w-4 h-4 mr-3" />
+          <Shield className="w-4 h-4 mr-1" />
           Admin
         </Link>
       )}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-3">
         <Link
           to="/profile"
-          className="flex items-center space-x-2 text-white hover:text-primary transition-colors"
+          className="flex items-center text-white hover:text-primary transition-colors"
         >
           <User className="w-5 h-5" />
-          <span>Profile</span>
         </Link>
         <button
           onClick={handleSignOut}
-          className="flex items-center space-x-2 text-white hover:text-secondary transition-colors"
+          className="flex items-center text-white hover:text-secondary transition-colors"
         >
           <LogOut className="w-5 h-5" />
-          <span>Sign Out</span>
         </button>
       </div>
     </>
   ) : (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-3">
       <Link
         to="/login"
         className="px-4 py-2 rounded-md text-white hover:text-primary transition-colors"
@@ -205,7 +203,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
 
           {/* Mobile Navigation Toggle */}
           <button
-            className="md:hidden text-white focus:outline-none"
+            className="lg:hidden text-white focus:outline-none"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -220,7 +218,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className="md:hidden glass-effect mt-2 py-4 px-4"
+          className="lg:hidden glass-effect mt-2 py-4 px-4"
         >
           <div className="flex flex-col space-y-4">
             <Link

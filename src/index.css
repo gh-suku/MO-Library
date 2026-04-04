@@ -233,3 +233,77 @@ input[type="date"]:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
 }
+
+/* Ensure proper spacing for fixed navbar */
+main {
+  min-height: calc(100vh - 80px);
+}
+
+/* Light theme improvements for Community and BookRequest pages */
+[data-theme="light"] .bg-gray-50 {
+  background-color: #f8fafc !important;
+}
+
+[data-theme="light"] .bg-white {
+  background-color: #ffffff !important;
+}
+
+[data-theme="light"] .text-gray-900 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .text-gray-800 {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] .text-gray-600 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .text-gray-500 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .border {
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .bg-blue-50 {
+  background-color: #eff6ff !important;
+}
+
+[data-theme="light"] .bg-blue-600 {
+  background-color: #2563eb !important;
+}
+
+[data-theme="light"] .text-blue-600 {
+  color: #2563eb !important;
+}
+
+[data-theme="light"] .text-blue-700 {
+  color: #1d4ed8 !important;
+}
+
+[data-theme="light"] .text-blue-800 {
+  color: #1e40af !important;
+}
+
+[data-theme="light"] .text-blue-900 {
+  color: #1e3a8a !important;
+}
+
+[data-theme="light"] .hover\:bg-blue-700:hover {
+  background-color: #1d4ed8 !important;
+}
+
+[data-theme="light"] .bg-gray-100 {
+  background-color: #f1f5f9 !important;
+}
+
+[data-theme="light"] .bg-gray-400 {
+  background-color: #94a3b8 !important;
+}
+
+[data-theme="light"] .bg-gray-300 {
+  background-color: #cbd5e1 !important;
+}

@@ -70,7 +70,7 @@ export default function BookRequest() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="text-center mb-8">
           <BookPlus className="mx-auto text-blue-600 mb-4" size={48} />
