@@ -57,7 +57,7 @@ const Admin: React.FC = () => {
         const startTime = new Date(booking.start_time);
         const endTime = new Date(booking.end_time);
         const hours = Math.ceil((endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60));
-        revenue += hours * 60; // 60 rubles per hour
+        revenue += hours * 5; // 5 rupees per hour
       });
       setTotalRevenue(revenue);
     } catch (error: any) {
@@ -93,7 +93,7 @@ const Admin: React.FC = () => {
     const start = new Date(startTime);
     const end = new Date(endTime);
     const hours = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60));
-    return hours * 60; // 60 rubles per hour
+    return hours * 5; // 5 rupees per hour
   };
 
   const filteredBookings = bookings
@@ -250,7 +250,7 @@ const Admin: React.FC = () => {
               </div>
             </div>
             <p className="text-sm text-gray-300 mt-1">
-              Based on Rs 60 per hour rate for all bookings
+              Based on Rs 5 per hour rate for all bookings
             </p>
           </div>
           

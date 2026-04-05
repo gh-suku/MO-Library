@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import { BookOpen, Calendar, Clock, MapPin, BookMarked, X } from 'lucide-react';
+import { BookOpen, Calendar, Clock, MapPin, BookMarked, X, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import type { Booking, Profile } from '../lib/supabase';
@@ -10,6 +10,36 @@ const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchBookings = async (userId: string) => {
+    const { data: bookingsData, error: bookingsError } = await supabase
+      .from('bookings')
+      .select(`
+        *,
+        seat:seats(*)
+      `)
+      .eq('user_id', userId)
+      .order('start_time', { ascending: false });
+    
+    if (bookingsError) throw bookingsError;
+    setBookings(bookingsData || []);
+  };
+
+  const refreshBookings = async () => {
+    setRefreshing(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await fetchBookings(user.id);
+        toast.success('Bookings refreshed');
+      }
+    } catch (error: any) {
+      toast.error('Failed to refresh bookings');
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,17 +61,7 @@ const Dashboard: React.FC = () => {
         setProfile(profileData);
 
         // Fetch bookings with seat information
-        const { data: bookingsData, error: bookingsError } = await supabase
-          .from('bookings')
-          .select(`
-            *,
-            seat:seats(*)
-          `)
-          .eq('user_id', user.id)
-          .order('start_time', { ascending: true });
-        
-        if (bookingsError) throw bookingsError;
-        setBookings(bookingsData);
+        await fetchBookings(user.id);
       } catch (error: any) {
         toast.error(error.message || 'Failed to load dashboard data');
       } finally {
@@ -192,7 +212,17 @@ const Dashboard: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="glass-effect p-6 rounded-xl lg:col-span-2"
           >
-            <h2 className="text-xl font-semibold mb-6">Your Bookings</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">Your Bookings</h2>
+              <button
+                onClick={refreshBookings}
+                disabled={refreshing}
+                className="p-2 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
+                title="Refresh bookings"
+              >
+                <RefreshCw className={`h-5 w-5 text-primary ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
             
             {bookings.length === 0 ? (
               <div className="text-center py-12">
