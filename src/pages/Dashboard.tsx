@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-xl text-gray-300 max-w-3xl mx-auto"
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
           >
             Manage your library experience and bookings all in one place
           </motion.p>
@@ -162,7 +162,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div>
                 <h2 className="text-xl font-semibold">{profile?.full_name || 'User'}</h2>
-                <p className="text-gray-300">{profile?.email}</p>
+                <p className="text-gray-600 dark:text-gray-300">{profile?.email}</p>
               </div>
             </div>
             
@@ -175,14 +175,14 @@ const Dashboard: React.FC = () => {
                     className="p-3 bg-primary/10 hover:bg-primary/20 rounded-lg flex flex-col items-center justify-center transition-colors"
                   >
                     <Calendar className="w-6 h-6 text-primary mb-2" />
-                    <span className="text-sm">Book a Seat</span>
+                    <span className="text-sm text-gray-800 dark:text-gray-200">Book a Seat</span>
                   </Link>
                   <Link
                     to="/profile"
                     className="p-3 bg-primary/10 hover:bg-primary/20 rounded-lg flex flex-col items-center justify-center transition-colors"
                   >
                     <BookMarked className="w-6 h-6 text-primary mb-2" />
-                    <span className="text-sm">Edit Profile</span>
+                    <span className="text-sm text-gray-800 dark:text-gray-200">Edit Profile</span>
                   </Link>
                 </div>
               </div>
@@ -192,13 +192,13 @@ const Dashboard: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
                     <p className="text-2xl font-bold gradient-text">{bookings.length}</p>
-                    <p className="text-sm text-gray-300">Total Bookings</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Total Bookings</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold gradient-text">
                       {bookings.filter(booking => isUpcoming(booking.start_time)).length}
                     </p>
-                    <p className="text-sm text-gray-300">Upcoming</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Upcoming</p>
                   </div>
                 </div>
               </div>
@@ -228,7 +228,7 @@ const Dashboard: React.FC = () => {
               <div className="text-center py-12">
                 <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium mb-2">No bookings yet</h3>
-                <p className="text-gray-300 mb-6">You haven't made any seat reservations yet.</p>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">You haven't made any seat reservations yet.</p>
                 <Link
                   to="/seat-booking"
                   className="px-6 py-2 rounded-md gradient-bg text-white font-medium hover:opacity-90 transition-opacity inline-block"
@@ -256,11 +256,11 @@ const Dashboard: React.FC = () => {
                           <h3 className="font-medium">
                             {booking.seat?.seat_number || 'Seat'}
                           </h3>
-                          <div className="flex items-center text-sm text-gray-300 mt-1">
+                          <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mt-1">
                             <Calendar className="w-4 h-4 mr-1" />
                             <span>{formatDate(booking.start_time)}</span>
                           </div>
-                          <div className="flex items-center text-sm text-gray-300 mt-1">
+                          <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mt-1">
                             <Clock className="w-4 h-4 mr-1" />
                             <span>
                               {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
@@ -294,7 +294,7 @@ const Dashboard: React.FC = () => {
                       </div>
                     ) : (
                       <div className="mt-3">
-                        <span className="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-300">
+                        <span className="text-xs px-2 py-1 rounded-full bg-gray-700 dark:bg-gray-700 text-gray-300 dark:text-gray-300">
                           Past
                         </span>
                       </div>

@@ -162,18 +162,18 @@ export default function Community() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-8">
+    <div className="min-h-screen pt-24 pb-8">
       <div className="max-w-3xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Community Feed</h1>
+        <h1 className="text-3xl font-bold mb-8">Community <span className="gradient-text">Feed</span></h1>
 
         {/* Create Post */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="glass-effect rounded-lg p-6 mb-6">
           <form onSubmit={handleCreatePost}>
             <textarea
               value={newPost.content}
               onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
               placeholder="Share what book you're looking for..."
-              className="w-full p-3 border rounded-lg mb-3 focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg mb-3 focus:ring-2 focus:ring-primary text-foreground"
               rows={3}
             />
             <div className="grid grid-cols-2 gap-3 mb-3">
@@ -182,19 +182,19 @@ export default function Community() {
                 value={newPost.book_title}
                 onChange={(e) => setNewPost({ ...newPost, book_title: e.target.value })}
                 placeholder="Book title (optional)"
-                className="p-2 border rounded-lg"
+                className="p-2 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg text-foreground"
               />
               <input
                 type="number"
                 value={newPost.duration_days}
                 onChange={(e) => setNewPost({ ...newPost, duration_days: e.target.value })}
                 placeholder="Days needed (optional)"
-                className="p-2 border rounded-lg"
+                className="p-2 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg text-foreground"
               />
             </div>
             <button
               type="submit"
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+              className="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
             >
               Post
             </button>
@@ -203,27 +203,29 @@ export default function Community() {
 
         {/* Posts Feed */}
         {loading ? (
-          <div className="text-center py-8">Loading...</div>
+          <div className="text-center py-8">
+            <div className="animate-spin-slow w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+          </div>
         ) : (
           <div className="space-y-4">
             {posts.map((post) => (
-              <div key={post.id} className="bg-white rounded-lg shadow p-6">
+              <div key={post.id} className="glass-effect rounded-lg p-6">
                 <div className="flex items-start gap-3 mb-4">
-                  <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 gradient-bg rounded-full flex items-center justify-center text-white font-bold">
                     {post.profile?.full_name?.[0] || 'U'}
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold">{post.profile?.full_name || 'User'}</h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       {new Date(post.created_at).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
 
-                <p className="text-gray-800 mb-3">{post.content}</p>
+                <p className="mb-3">{post.content}</p>
                 
                 {post.book_title && (
-                  <div className="bg-blue-50 p-3 rounded-lg mb-3">
+                  <div className="bg-primary/10 p-3 rounded-lg mb-3">
                     <p className="text-sm">
                       <span className="font-semibold">Book:</span> {post.book_title}
                       {post.duration_days && (
@@ -235,19 +237,19 @@ export default function Community() {
                   </div>
                 )}
 
-                <div className="flex gap-4 pt-3 border-t">
+                <div className="flex gap-4 pt-3 border-t border-gray-700 dark:border-gray-700">
                   <button
                     onClick={() => handleLike(post.id, post.user_has_liked || false)}
                     className={`flex items-center gap-2 ${
-                      post.user_has_liked ? 'text-red-600' : 'text-gray-600'
-                    } hover:text-red-600`}
+                      post.user_has_liked ? 'text-secondary' : 'text-gray-600 dark:text-gray-300'
+                    } hover:text-secondary transition-colors`}
                   >
                     <Heart className={post.user_has_liked ? 'fill-current' : ''} size={20} />
                     <span>{post.likes_count}</span>
                   </button>
                   <button
                     onClick={() => toggleComments(post.id)}
-                    className="flex items-center gap-2 text-gray-600 hover:text-blue-600"
+                    className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"
                   >
                     <MessageSquare size={20} />
                     <span>{post.comments_count}</span>
@@ -256,15 +258,15 @@ export default function Community() {
 
                 {/* Comments Section */}
                 {expandedPost === post.id && (
-                  <div className="mt-4 pt-4 border-t">
+                  <div className="mt-4 pt-4 border-t border-gray-700 dark:border-gray-700">
                     <div className="space-y-3 mb-4">
                       {comments[post.id]?.map((comment) => (
                         <div key={comment.id}>
                           <div className="flex gap-2">
-                            <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-sm">
+                            <div className="w-8 h-8 bg-primary/30 rounded-full flex items-center justify-center text-white text-sm">
                               {comment.profile?.full_name?.[0] || 'U'}
                             </div>
-                            <div className="flex-1 bg-gray-100 rounded-lg p-3">
+                            <div className="flex-1 bg-background-light rounded-lg p-3">
                               <p className="font-semibold text-sm">
                                 {comment.profile?.full_name || 'User'}
                               </p>
@@ -273,7 +275,7 @@ export default function Community() {
                                 onClick={() =>
                                   setReplyTo((prev) => ({ ...prev, [post.id]: comment.id }))
                                 }
-                                className="text-xs text-blue-600 mt-1"
+                                className="text-xs text-primary mt-1 hover:text-primary-dark transition-colors"
                               >
                                 Reply
                               </button>
@@ -285,10 +287,10 @@ export default function Community() {
                             <div className="ml-10 mt-2 space-y-2">
                               {comment.replies.map((reply) => (
                                 <div key={reply.id} className="flex gap-2">
-                                  <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs">
+                                  <div className="w-6 h-6 bg-secondary/30 rounded-full flex items-center justify-center text-white text-xs">
                                     {reply.profile?.full_name?.[0] || 'U'}
                                   </div>
-                                  <div className="flex-1 bg-gray-50 rounded-lg p-2">
+                                  <div className="flex-1 bg-background rounded-lg p-2">
                                     <p className="font-semibold text-xs">
                                       {reply.profile?.full_name || 'User'}
                                     </p>
@@ -309,11 +311,11 @@ export default function Community() {
                                   setNewComment((prev) => ({ ...prev, [post.id]: e.target.value }))
                                 }
                                 placeholder="Write a reply..."
-                                className="flex-1 p-2 border rounded-lg text-sm"
+                                className="flex-1 p-2 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg text-sm text-foreground"
                               />
                               <button
                                 onClick={() => handleAddComment(post.id, comment.id)}
-                                className="bg-blue-600 text-white p-2 rounded-lg"
+                                className="gradient-bg text-white p-2 rounded-lg hover:opacity-90 transition-opacity"
                               >
                                 <Send size={16} />
                               </button>
@@ -332,11 +334,11 @@ export default function Community() {
                           setNewComment((prev) => ({ ...prev, [post.id]: e.target.value }))
                         }
                         placeholder="Write a comment..."
-                        className="flex-1 p-2 border rounded-lg"
+                        className="flex-1 p-2 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg text-foreground"
                       />
                       <button
                         onClick={() => handleAddComment(post.id)}
-                        className="bg-blue-600 text-white p-2 rounded-lg"
+                        className="gradient-bg text-white p-2 rounded-lg hover:opacity-90 transition-opacity"
                       >
                         <Send size={20} />
                       </button>

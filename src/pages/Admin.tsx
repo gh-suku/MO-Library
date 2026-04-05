@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { supabase, isAdmin } from '../lib/supabase';
-import { BookOpen, Calendar, Clock, User, Search, Download, Filter, RefreshCw, IndianRupee  } from 'lucide-react';
+import { BookOpen, User, Search, Download, Filter, RefreshCw, IndianRupee  } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import type { Booking } from '../lib/supabase';
@@ -11,7 +11,6 @@ const Admin: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'upcoming' | 'past'>('all');
-  const [totalRevenue, setTotalRevenue] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,16 +49,6 @@ const Admin: React.FC = () => {
       
       if (error) throw error;
       setBookings(data || []);
-      
-      // Calculate total revenue
-      let revenue = 0;
-      data?.forEach(booking => {
-        const startTime = new Date(booking.start_time);
-        const endTime = new Date(booking.end_time);
-        const hours = Math.ceil((endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60));
-        revenue += hours * 5; // 5 rupees per hour
-      });
-      setTotalRevenue(revenue);
     } catch (error: any) {
       toast.error(error.message || 'Failed to load bookings');
     } finally {
@@ -180,7 +169,7 @@ const Admin: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-xl text-gray-300 max-w-3xl mx-auto"
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
           >
             Manage all library bookings and user data
           </motion.p>
@@ -222,10 +211,10 @@ const Admin: React.FC = () => {
               
               <button
                 onClick={fetchBookings}
-                className="p-2 rounded-md bg-background-light hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-md bg-background-light hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors"
                 title="Refresh data"
               >
-                <RefreshCw className="h-5 w-5 text-gray-300" />
+                <RefreshCw className="h-5 w-5 text-gray-800 dark:text-gray-300" />
               </button>
               
               <button
@@ -249,7 +238,7 @@ const Admin: React.FC = () => {
                 Rs{filteredTotalRevenue.toLocaleString()}
               </div>
             </div>
-            <p className="text-sm text-gray-300 mt-1">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
               Based on Rs 5 per hour rate for all bookings
             </p>
           </div>
@@ -258,22 +247,22 @@ const Admin: React.FC = () => {
             <table className="min-w-full divide-y divide-gray-700">
               <thead className="bg-background-light">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     User
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Seat
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Date
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Time
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Status
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Price
                   </th>
                 </tr>
@@ -296,23 +285,23 @@ const Admin: React.FC = () => {
                             )}
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-white">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">
                               {booking.profile?.full_name || 'Unknown User'}
                             </div>
-                            <div className="text-sm text-gray-300">
+                            <div className="text-sm text-gray-600 dark:text-gray-300">
                               {booking.profile?.email || 'No email'}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-white">{booking.seat?.seat_number || 'Unknown'}</div>
+                        <div className="text-sm text-gray-900 dark:text-white">{booking.seat?.seat_number || 'Unknown'}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-white">{formatDate(booking.start_time)}</div>
+                        <div className="text-sm text-gray-900 dark:text-white">{formatDate(booking.start_time)}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-white">
+                        <div className="text-sm text-gray-900 dark:text-white">
                           {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
                         </div>
                       </td>
@@ -320,13 +309,13 @@ const Admin: React.FC = () => {
                         <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           isUpcoming(booking.start_time)
                             ? 'bg-primary/20 text-primary'
-                            : 'bg-gray-700 text-gray-300'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                         }`}>
                           {isUpcoming(booking.start_time) ? 'Upcoming' : 'Past'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-white">
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">
                           Rs{calculatePrice(booking.start_time, booking.end_time)}
                         </div>
                       </td>
@@ -336,7 +325,7 @@ const Admin: React.FC = () => {
                   <tr>
                     <td colSpan={6} className="px-6 py-12 text-center">
                       <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-300">No bookings found</p>
+                      <p className="text-gray-600 dark:text-gray-300">No bookings found</p>
                     </td>
                   </tr>
                 )}
@@ -345,7 +334,7 @@ const Admin: React.FC = () => {
           </div>
           
           <div className="mt-4 flex justify-between items-center">
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
               Total: {filteredBookings.length} bookings
             </div>
             <div className="text-sm font-medium text-primary">

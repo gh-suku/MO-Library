@@ -51,7 +51,7 @@ const Home: React.FC = () => {
               <h1 className="text-4xl md:text-6xl font-bold leading-tight">
                 Welcome to the <span className="gradient-text">Future</span> of Libraries
               </h1>
-              <p className="text-xl text-gray-300">
+              <p className="text-xl text-gray-300 dark:text-gray-300">
                 Mo-Library reimagines the traditional library experience with cutting-edge technology and a focus on
                 community.
               </p>
@@ -118,7 +118,7 @@ const Home: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-xl text-gray-300 max-w-3xl mx-auto"
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
             >
               Discover our innovative features designed to enhance your library experience
             </motion.p>
@@ -136,7 +136,7 @@ const Home: React.FC = () => {
               >
                 <div className="mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-300">{feature.description}</p>
+                <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -157,7 +157,7 @@ const Home: React.FC = () => {
               <h2 className="text-3xl md:text-4xl font-bold">
                 Reserve Your <span className="gradient-text">Perfect Spot</span>
               </h2>
-              <p className="text-xl text-gray-300">
+              <p className="text-xl text-gray-600 dark:text-gray-300">
                 Our intuitive seat booking system lets you choose the ideal location for your needs, whether you're
                 studying, researching, or just enjoying a good book.
               </p>
@@ -166,25 +166,25 @@ const Home: React.FC = () => {
                   <div className="w-6 h-6 rounded-full gradient-bg flex items-center justify-center">
                     <span className="text-white text-sm">✓</span>
                   </div>
-                  <span>Book for the next 2 or 4 hours with one click</span>
+                  <span className="text-gray-800 dark:text-gray-200">Book for the next 2 or 4 hours with one click</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-full gradient-bg flex items-center justify-center">
                     <span className="text-white text-sm">✓</span>
                   </div>
-                  <span>Set custom start and end times</span>
+                  <span className="text-gray-800 dark:text-gray-200">Set custom start and end times</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-full gradient-bg flex items-center justify-center">
                     <span className="text-white text-sm">✓</span>
                   </div>
-                  <span>See real-time seat availability</span>
+                  <span className="text-gray-800 dark:text-gray-200">See real-time seat availability</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-full gradient-bg flex items-center justify-center">
                     <span className="text-white text-sm">✓</span>
                   </div>
-                  <span>Manage your bookings from your dashboard</span>
+                  <span className="text-gray-800 dark:text-gray-200">Manage your bookings from your dashboard</span>
                 </li>
               </ul>
               <div>
@@ -220,15 +220,15 @@ const Home: React.FC = () => {
                   <div className="flex space-x-4">
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 rounded-sm seat available"></div>
-                      <span className="text-sm">Available</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200">Available</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 rounded-sm seat booked"></div>
-                      <span className="text-sm">Booked</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200">Booked</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 rounded-sm seat your-booking"></div>
-                      <span className="text-sm">Your Booking</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200">Your Booking</span>
                     </div>
                   </div>
                 </div>
@@ -257,7 +257,7 @@ const Home: React.FC = () => {
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Ready to Experience the <span className="gradient-text">Future of Libraries?</span>
               </h2>
-              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
                 Join Mo-Library today and discover a new way to learn, research, and connect.
               </p>
               <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
