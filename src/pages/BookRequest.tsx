@@ -70,22 +70,22 @@ export default function BookRequest() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-8">
+    <div className="min-h-screen pt-24 pb-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="text-center mb-8">
-          <BookPlus className="mx-auto text-blue-600 mb-4" size={48} />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Request a Book</h1>
-          <p className="text-gray-600">
+          <BookPlus className="mx-auto text-primary mb-4" size={48} />
+          <h1 className="text-3xl font-bold mb-2">Request a <span className="gradient-text">Book</span></h1>
+          <p className="text-gray-600 dark:text-gray-300">
             Can't find the book you're looking for? Request it and we'll try to add it to our collection!
           </p>
         </div>
 
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-            <CheckCircle className="text-green-600 flex-shrink-0 mt-0.5" size={20} />
+          <div className="glass-effect border border-primary/30 rounded-lg p-4 mb-6 flex items-start gap-3">
+            <CheckCircle className="text-primary flex-shrink-0 mt-0.5" size={20} />
             <div>
-              <h3 className="font-semibold text-green-900 mb-1">Request Submitted!</h3>
-              <p className="text-green-700 text-sm">
+              <h3 className="font-semibold mb-1">Request Submitted!</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
                 Thank you for your request. We'll review it and get back to you via email soon.
               </p>
             </div>
@@ -93,16 +93,16 @@ export default function BookRequest() {
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700">{error}</p>
+          <div className="glass-effect border border-secondary/30 rounded-lg p-4 mb-6">
+            <p className="text-secondary">{error}</p>
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="glass-effect rounded-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Field */}
             <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-semibold mb-2">
                 Your Name
               </label>
               <div className="relative">
@@ -114,7 +114,7 @@ export default function BookRequest() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -122,7 +122,7 @@ export default function BookRequest() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold mb-2">
                 Your Email
               </label>
               <div className="relative">
@@ -134,18 +134,18 @@ export default function BookRequest() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
                   placeholder="your.email@example.com"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
                 We'll use this to notify you about your request
               </p>
             </div>
 
             {/* Book Title Field */}
             <div>
-              <label htmlFor="bookTitle" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="bookTitle" className="block text-sm font-semibold mb-2">
                 Book Title
               </label>
               <div className="relative">
@@ -157,7 +157,7 @@ export default function BookRequest() {
                   value={formData.bookTitle}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
                   placeholder="Enter the book title"
                 />
               </div>
@@ -165,7 +165,7 @@ export default function BookRequest() {
 
             {/* Author Field */}
             <div>
-              <label htmlFor="author" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="author" className="block text-sm font-semibold mb-2">
                 Author Name
               </label>
               <div className="relative">
@@ -177,7 +177,7 @@ export default function BookRequest() {
                   value={formData.author}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
                   placeholder="Enter the author's name"
                 />
               </div>
@@ -185,7 +185,7 @@ export default function BookRequest() {
 
             {/* Additional Info Field */}
             <div>
-              <label htmlFor="additionalInfo" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="additionalInfo" className="block text-sm font-semibold mb-2">
                 Additional Information (Optional)
               </label>
               <textarea
@@ -194,7 +194,7 @@ export default function BookRequest() {
                 value={formData.additionalInfo}
                 onChange={handleChange}
                 rows={4}
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-background-light border border-gray-700 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
                 placeholder="Any additional details like ISBN, edition, publisher, or why you need this book..."
               />
             </div>
@@ -203,7 +203,7 @@ export default function BookRequest() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              className="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
             >
               {loading ? 'Submitting...' : 'Submit Request'}
             </button>
@@ -211,9 +211,9 @@ export default function BookRequest() {
         </div>
 
         {/* Info Box */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-semibold text-blue-900 mb-2">What happens next?</h3>
-          <ul className="text-sm text-blue-800 space-y-1">
+        <div className="mt-6 glass-effect border border-primary/30 rounded-lg p-4">
+          <h3 className="font-semibold mb-2">What happens next?</h3>
+          <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
             <li>• Your request will be sent to the library admin</li>
             <li>• We'll review the availability and feasibility</li>
             <li>• You'll receive an email response within 3-5 business days</li>

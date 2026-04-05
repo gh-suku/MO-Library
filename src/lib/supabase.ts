@@ -46,6 +46,17 @@ export type Book = {
   is_available: boolean;
   total_copies: number;
   available_copies: number;
+  book_type?: 'physical' | 'ebook' | 'both';
+  pdf_url?: string | null;
+  cover_image_url?: string | null;
+  description?: string | null;
+  genre?: string | null;
+  category?: string | null;
+  publication_year?: number | null;
+  pages?: number | null;
+  language?: string | null;
+  publisher?: string | null;
+  rating?: number | null;
   created_at: string;
   updated_at: string;
 };
