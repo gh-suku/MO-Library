@@ -28,6 +28,10 @@ import RefundPolicy from './pages/RefundPolicy';
 import Community from './pages/Community';
 import BookSearch from './pages/BookSearch';
 import BookRequest from './pages/BookRequest';
+import BookDetails from './pages/BookDetails';
+import MyReading from './pages/MyReading';
+import LearningPaths from './pages/LearningPaths';
+import LearningPathDetail from './pages/LearningPathDetail';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -75,6 +79,10 @@ function App() {
           <Route path="/admin" element={session ? <Admin /> : <Navigate to="/login" />} />
           <Route path="/community" element={session ? <Community /> : <Navigate to="/login" />} />
           <Route path="/book-search" element={session ? <BookSearch /> : <Navigate to="/login" />} />
+          <Route path="/book/:id" element={session ? <BookDetails /> : <Navigate to="/login" />} />
+          <Route path="/my-reading" element={session ? <MyReading /> : <Navigate to="/login" />} />
+          <Route path="/learning-paths" element={session ? <LearningPaths /> : <Navigate to="/login" />} />
+          <Route path="/learning-path/:id" element={session ? <LearningPathDetail /> : <Navigate to="/login" />} />
           <Route path="/book-request" element={<BookRequest />} />
           
           {/* Legal and Info Pages */}

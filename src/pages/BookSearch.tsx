@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { Book } from '../lib/supabase';
 import { Search, BookOpen, CheckCircle, XCircle } from 'lucide-react';
 
 export default function BookSearch() {
+  const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -137,7 +139,8 @@ export default function BookSearch() {
             {filteredBooks.map((book) => (
               <div
                 key={book.id}
-                className="glass-effect rounded-lg hover:neon-shadow transition-all p-6"
+                onClick={() => navigate(`/book/${book.id}`)}
+                className="glass-effect rounded-lg hover:neon-shadow transition-all p-6 cursor-pointer"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">

@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { supabase, isAdmin } from '../lib/supabase';
-import { BookOpen, User, Search, Download, Filter, RefreshCw, IndianRupee  } from 'lucide-react';
+import { BookOpen, User, Search, Download, Filter, RefreshCw, IndianRupee, Plus, Edit, Trash2, BookPlus  } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import type { Booking } from '../lib/supabase';
+import type { Booking, Book } from '../lib/supabase';
 
 const Admin: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'bookings' | 'books'>('bookings');
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'upcoming' | 'past'>('all');
+  const [showBookModal, setShowBookModal] = useState(false);
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +29,7 @@ const Admin: React.FC = () => {
         }
 
         await fetchBookings();
+        await fetchBooks();
       } catch (error: any) {
         toast.error(error.message || 'Failed to load admin data');
         setLoading(false);
@@ -53,6 +58,37 @@ const Admin: React.FC = () => {
       toast.error(error.message || 'Failed to load bookings');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchBooks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('books')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setBooks(data || []);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to load books');
+    }
+  };
+
+  const handleDeleteBook = async (bookId: string) => {
+    if (!confirm('Are you sure you want to delete this book?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('books')
+        .delete()
+        .eq('id', bookId);
+      
+      if (error) throw error;
+      toast.success('Book deleted successfully');
+      fetchBooks();
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to delete book');
     }
   };
 
@@ -171,10 +207,36 @@ const Admin: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
           >
-            Manage all library bookings and user data
+            Manage library bookings and book collection
           </motion.p>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="flex justify-center mb-8 gap-4">
+          <button
+            onClick={() => setActiveTab('bookings')}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+              activeTab === 'bookings'
+                ? 'gradient-bg text-white'
+                : 'glass-effect text-gray-600 dark:text-gray-300 hover:bg-primary/20'
+            }`}
+          >
+            Bookings Management
+          </button>
+          <button
+            onClick={() => setActiveTab('books')}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+              activeTab === 'books'
+                ? 'gradient-bg text-white'
+                : 'glass-effect text-gray-600 dark:text-gray-300 hover:bg-primary/20'
+            }`}
+          >
+            Books Management
+          </button>
+        </div>
+
+        {/* Bookings Tab */}
+        {activeTab === 'bookings' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -342,6 +404,364 @@ const Admin: React.FC = () => {
             </div>
           </div>
         </motion.div>
+        )}
+
+        {/* Books Tab */}
+        {activeTab === 'books' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="glass-effect p-6 rounded-xl"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Book Collection</h2>
+              <button
+                onClick={() => {
+                  setEditingBook(null);
+                  setShowBookModal(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg gradient-bg text-white hover:opacity-90 transition-opacity"
+              >
+                <Plus size={20} />
+                Add New Book
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {books.map((book) => (
+                <div key={book.id} className="bg-background-light rounded-lg p-4 hover:neon-shadow transition-all">
+                  {book.cover_image_url && (
+                    <img
+                      src={book.cover_image_url}
+                      alt={book.title}
+                      className="w-full h-48 object-cover rounded-lg mb-3"
+                    />
+                  )}
+                  <h3 className="font-bold text-lg mb-1">{book.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">by {book.author}</p>
+                  
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`px-2 py-1 rounded text-xs ${
+                      book.book_type === 'ebook' ? 'bg-blue-500/20 text-blue-400' :
+                      book.book_type === 'both' ? 'bg-purple-500/20 text-purple-400' :
+                      'bg-green-500/20 text-green-400'
+                    }`}>
+                      {book.book_type}
+                    </span>
+                    {book.genre && (
+                      <span className="px-2 py-1 rounded text-xs bg-primary/20 text-primary">
+                        {book.genre}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-sm mb-3">
+                    <p>Available: {book.available_copies}/{book.total_copies}</p>
+                    {book.isbn && <p className="text-gray-600 dark:text-gray-300">ISBN: {book.isbn}</p>}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingBook(book);
+                        setShowBookModal(true);
+                      }}
+                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-colors"
+                    >
+                      <Edit size={16} />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteBook(book.id)}
+                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-secondary/20 text-secondary rounded-lg hover:bg-secondary/30 transition-colors"
+                    >
+                      <Trash2 size={16} />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {books.length === 0 && (
+              <div className="text-center py-12">
+                <BookPlus className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No books yet</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">Start building your library collection</p>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Book Modal */}
+        {showBookModal && (
+          <BookModal
+            book={editingBook}
+            onClose={() => {
+              setShowBookModal(false);
+              setEditingBook(null);
+            }}
+            onSave={() => {
+              fetchBooks();
+              setShowBookModal(false);
+              setEditingBook(null);
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Book Modal Component
+const BookModal: React.FC<{
+  book: Book | null;
+  onClose: () => void;
+  onSave: () => void;
+}> = ({ book, onClose, onSave }) => {
+  const [formData, setFormData] = useState({
+    title: book?.title || '',
+    author: book?.author || '',
+    isbn: book?.isbn || '',
+    book_type: book?.book_type || 'physical',
+    pdf_url: book?.pdf_url || '',
+    cover_image_url: book?.cover_image_url || '',
+    description: book?.description || '',
+    genre: book?.genre || '',
+    category: book?.category || '',
+    publication_year: book?.publication_year || '',
+    pages: book?.pages || '',
+    language: book?.language || 'English',
+    publisher: book?.publisher || '',
+    total_copies: book?.total_copies || 1,
+    available_copies: book?.available_copies || 1,
+  });
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+
+    try {
+      const bookData = {
+        ...formData,
+        publication_year: formData.publication_year ? parseInt(formData.publication_year as string) : null,
+        pages: formData.pages ? parseInt(formData.pages as string) : null,
+        is_available: formData.available_copies > 0,
+      };
+
+      if (book) {
+        // Update existing book
+        const { error } = await supabase
+          .from('books')
+          .update(bookData)
+          .eq('id', book.id);
+        
+        if (error) throw error;
+        toast.success('Book updated successfully');
+      } else {
+        // Create new book
+        const { error } = await supabase
+          .from('books')
+          .insert(bookData);
+        
+        if (error) throw error;
+        toast.success('Book added successfully');
+      }
+
+      onSave();
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to save book');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="glass-effect rounded-xl p-6 max-w-2xl w-full my-8">
+        <h2 className="text-2xl font-bold mb-6">{book ? 'Edit Book' : 'Add New Book'}</h2>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2">Title *</label>
+              <input
+                type="text"
+                required
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Author *</label>
+              <input
+                type="text"
+                required
+                value={formData.author}
+                onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">ISBN</label>
+              <input
+                type="text"
+                value={formData.isbn}
+                onChange={(e) => setFormData({ ...formData, isbn: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Book Type</label>
+              <select
+                value={formData.book_type}
+                onChange={(e) => setFormData({ ...formData, book_type: e.target.value as 'physical' | 'ebook' | 'both' })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              >
+                <option value="physical">Physical</option>
+                <option value="ebook">E-book</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Genre</label>
+              <input
+                type="text"
+                value={formData.genre}
+                onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Category</label>
+              <input
+                type="text"
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Publication Year</label>
+              <input
+                type="number"
+                value={formData.publication_year}
+                onChange={(e) => setFormData({ ...formData, publication_year: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Pages</label>
+              <input
+                type="number"
+                value={formData.pages}
+                onChange={(e) => setFormData({ ...formData, pages: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Language</label>
+              <input
+                type="text"
+                value={formData.language}
+                onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Publisher</label>
+              <input
+                type="text"
+                value={formData.publisher}
+                onChange={(e) => setFormData({ ...formData, publisher: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Total Copies</label>
+              <input
+                type="number"
+                min="1"
+                value={formData.total_copies}
+                onChange={(e) => setFormData({ ...formData, total_copies: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">Available Copies</label>
+              <input
+                type="number"
+                min="0"
+                value={formData.available_copies}
+                onChange={(e) => setFormData({ ...formData, available_copies: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-2">Cover Image URL</label>
+            <input
+              type="url"
+              value={formData.cover_image_url}
+              onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
+              className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+            />
+          </div>
+
+          {(formData.book_type === 'ebook' || formData.book_type === 'both') && (
+            <div>
+              <label className="block text-sm font-semibold mb-2">PDF URL</label>
+              <input
+                type="url"
+                value={formData.pdf_url}
+                onChange={(e) => setFormData({ ...formData, pdf_url: e.target.value })}
+                className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-semibold mb-2">Description</label>
+            <textarea
+              rows={4}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-3 py-2 bg-background-light border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 px-4 py-2 gradient-bg text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : book ? 'Update Book' : 'Add Book'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

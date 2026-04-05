@@ -7,18 +7,14 @@ import {
   BookOpen,
   Menu,
   X,
-  LogOut,
   User,
-  BookMarked,
   Shield,
   Home,
   LayoutDashboard,
   CalendarCheck,
   Sun,
   Moon,
-  Users,
-  Search,
-  BookPlus,
+  ChevronDown,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -31,6 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
   const [scrolled, setScrolled] = useState(false);
   const [userIsAdmin, setUserIsAdmin] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [showBooksDropdown, setShowBooksDropdown] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,15 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
     }
   }, [session]);
 
-  const handleSignOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast.success("Signed out successfully");
-      navigate("/");
-    } catch (error) {
-      toast.error("Error signing out");
-    }
-  };
+
 
   return (
     <nav
@@ -108,98 +97,138 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-4">
-  <Link
-    to="/"
-    className="text-white hover:text-primary transition-colors flex items-center"
-  >
-    <Home className="w-5 h-5 mr-1" />
-    Home
-  </Link>
-  <button
-    onClick={toggleTheme}
-    className="text-white hover:text-primary transition-colors flex items-center p-2"
-    aria-label="Toggle theme"
-  >
-    {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-  </button>
-  {session ? (
-    <>
-      <Link
-        to="/dashboard"
-        className="text-white hover:text-primary transition-colors flex items-center"
-      >
-        <LayoutDashboard className="w-5 h-5 mr-1" />
-        Dashboard
-      </Link>
-      <Link
-        to="/seat-booking"
-        className="text-white hover:text-primary transition-colors flex items-center"
-      >
-        <CalendarCheck className="w-5 h-5 mr-1" />
-        Seats
-      </Link>
-      <Link
-        to="/community"
-        className="text-white hover:text-primary transition-colors flex items-center"
-      >
-        <Users className="w-5 h-5 mr-1" />
-        Community
-      </Link>
-      <Link
-        to="/book-search"
-        className="text-white hover:text-primary transition-colors flex items-center"
-      >
-        <Search className="w-5 h-5 mr-1" />
-        Books
-      </Link>
-      <Link
-        to="/book-request"
-        className="text-white hover:text-primary transition-colors flex items-center"
-      >
-        <BookPlus className="w-5 h-5 mr-1" />
-        Request
-      </Link>
-      {userIsAdmin && (
-        <Link
-          to="/admin"
-          className="text-white hover:text-primary transition-colors flex items-center"
-        >
-          <Shield className="w-4 h-4 mr-1" />
-          Admin
-        </Link>
-      )}
-      <div className="flex items-center space-x-3">
-        <Link
-          to="/profile"
-          className="flex items-center text-white hover:text-primary transition-colors"
-        >
-          <User className="w-5 h-5" />
-        </Link>
-        <button
-          onClick={handleSignOut}
-          className="flex items-center text-white hover:text-secondary transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
-        </button>
-      </div>
-    </>
-  ) : (
-    <div className="flex items-center space-x-3">
-      <Link
-        to="/login"
-        className="px-4 py-2 rounded-md text-white hover:text-primary transition-colors"
-      >
-        Login
-      </Link>
-      <Link
-        to="/signup"
-        className="px-4 py-2 rounded-md gradient-bg text-white hover:opacity-90 transition-opacity"
-      >
-        Sign Up
-      </Link>
-    </div>
-  )}
-</div>
+            <Link
+              to="/"
+              className="text-white hover:text-primary transition-colors flex items-center"
+            >
+              <Home className="w-5 h-5 mr-1" />
+              Home
+            </Link>
+            {session ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="text-white hover:text-primary transition-colors flex items-center"
+                >
+                  <LayoutDashboard className="w-5 h-5 mr-1" />
+                  Dashboard
+                </Link>
+                <Link
+                  to="/seat-booking"
+                  className="text-white hover:text-primary transition-colors flex items-center"
+                >
+                  <CalendarCheck className="w-5 h-5 mr-1" />
+                  Seats
+                </Link>
+                
+                {/* Books Dropdown */}
+                <div className="relative">
+                  <button
+                    onMouseEnter={() => setShowBooksDropdown(true)}
+                    onMouseLeave={() => setShowBooksDropdown(false)}
+                    className="text-white hover:text-primary transition-colors flex items-center"
+                  >
+                    <BookOpen className="w-5 h-5 mr-1" />
+                    Books
+                    <ChevronDown className="w-4 h-4 ml-1" />
+                  </button>
+                  {showBooksDropdown && (
+                    <div 
+                      className="absolute top-full mt-2 w-48 glass-effect rounded-lg shadow-lg py-2 z-50"
+                      onMouseEnter={() => setShowBooksDropdown(true)}
+                      onMouseLeave={() => setShowBooksDropdown(false)}
+                    >
+                      <Link
+                        to="/book-search"
+                        className="block px-4 py-2 text-white hover:bg-primary/20 transition-colors"
+                      >
+                        Browse Books
+                      </Link>
+                      <Link
+                        to="/my-reading"
+                        className="block px-4 py-2 text-white hover:bg-primary/20 transition-colors"
+                      >
+                        My Reading
+                      </Link>
+                      <Link
+                        to="/book-request"
+                        className="block px-4 py-2 text-white hover:bg-primary/20 transition-colors"
+                      >
+                        Request Book
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                <Link
+                  to="/learning-paths"
+                  className="text-white hover:text-primary transition-colors flex items-center"
+                >
+                  <BookOpen className="w-5 h-5 mr-1" />
+                  Roadmap
+                </Link>
+
+                <Link
+                  to="/community"
+                  className="text-white hover:text-primary transition-colors flex items-center"
+                >
+                  <BookOpen className="w-5 h-5 mr-1" />
+                  Community
+                </Link>
+
+                {userIsAdmin && (
+                  <Link
+                    to="/admin"
+                    className="text-white hover:text-primary transition-colors flex items-center"
+                  >
+                    <Shield className="w-4 h-4 mr-1" />
+                    Admin
+                  </Link>
+                )}
+                
+                <Link
+                  to="/profile"
+                  className="flex items-center text-white hover:text-primary transition-colors"
+                >
+                  <User className="w-5 h-5" />
+                </Link>
+                
+                {/* Theme Toggle at the end */}
+                <button
+                  onClick={toggleTheme}
+                  className="text-white hover:text-primary transition-colors flex items-center p-2"
+                  aria-label="Toggle theme"
+                >
+                  {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center space-x-3">
+                  <Link
+                    to="/login"
+                    className="px-4 py-2 rounded-md text-white hover:text-primary transition-colors"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="px-4 py-2 rounded-md gradient-bg text-white hover:opacity-90 transition-opacity"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+                {/* Theme Toggle at the end for non-logged in users */}
+                <button
+                  onClick={toggleTheme}
+                  className="text-white hover:text-primary transition-colors flex items-center p-2"
+                  aria-label="Toggle theme"
+                >
+                  {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
+              </>
+            )}
+          </div>
 
           {/* Mobile Navigation Toggle */}
           <button
@@ -228,25 +257,6 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
             >
               Home
             </Link>
-            <button
-              onClick={() => {
-                toggleTheme();
-                setIsOpen(false);
-              }}
-              className="text-left text-white hover:text-primary transition-colors flex items-center"
-            >
-              {theme === 'dark' ? (
-                <>
-                  <Sun className="w-5 h-5 mr-2" />
-                  Light Mode
-                </>
-              ) : (
-                <>
-                  <Moon className="w-5 h-5 mr-2" />
-                  Dark Mode
-                </>
-              )}
-            </button>
             {session ? (
               <>
                 <Link
@@ -264,18 +274,25 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                   Book a Seat
                 </Link>
                 <Link
-                  to="/community"
-                  className="text-white hover:text-primary transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Community
-                </Link>
-                <Link
                   to="/book-search"
                   className="text-white hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
-                  Search Books
+                  Browse Books
+                </Link>
+                <Link
+                  to="/my-reading"
+                  className="text-white hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  My Reading
+                </Link>
+                <Link
+                  to="/learning-paths"
+                  className="text-white hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Roadmap
                 </Link>
                 <Link
                   to="/book-request"
@@ -283,6 +300,13 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                   onClick={() => setIsOpen(false)}
                 >
                   Request Book
+                </Link>
+                <Link
+                  to="/community"
+                  className="text-white hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Community
                 </Link>
                 {userIsAdmin && (
                   <Link
@@ -301,15 +325,6 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 >
                   Profile
                 </Link>
-                <button
-                  onClick={() => {
-                    handleSignOut();
-                    setIsOpen(false);
-                  }}
-                  className="text-left text-white hover:text-secondary transition-colors"
-                >
-                  Sign Out
-                </button>
               </>
             ) : (
               <>
@@ -329,6 +344,26 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 </Link>
               </>
             )}
+            {/* Theme Toggle at the end */}
+            <button
+              onClick={() => {
+                toggleTheme();
+                setIsOpen(false);
+              }}
+              className="text-left text-white hover:text-primary transition-colors flex items-center"
+            >
+              {theme === 'dark' ? (
+                <>
+                  <Sun className="w-5 h-5 mr-2" />
+                  Light Mode
+                </>
+              ) : (
+                <>
+                  <Moon className="w-5 h-5 mr-2" />
+                  Dark Mode
+                </>
+              )}
+            </button>
           </div>
         </motion.div>
       )}

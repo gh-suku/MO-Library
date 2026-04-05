@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { User, Mail, Camera, Save, Loader2 } from 'lucide-react';
+import { User, Mail, Camera, Save, Loader2, LogOut } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { Profile } from '../lib/supabase';
 
@@ -12,6 +13,7 @@ const ProfilePage: React.FC = () => {
   const [avatarUrl, setAvatarUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -99,6 +101,19 @@ const ProfilePage: React.FC = () => {
       toast.error(error.message || 'Failed to upload avatar');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    const confirmed = window.confirm("Are you sure you want to sign out?");
+    if (!confirmed) return;
+    
+    try {
+      await supabase.auth.signOut();
+      toast.success("Signed out successfully");
+      navigate("/");
+    } catch (error) {
+      toast.error("Error signing out");
     }
   };
 
@@ -230,6 +245,16 @@ const ProfilePage: React.FC = () => {
               </div>
             </form>
             
+            {/* Sign Out Button */}
+            <div className="mt-6 pt-6 border-t border-gray-700">
+              <button
+                onClick={handleSignOut}
+                className="w-full flex justify-center items-center py-2 px-4 border border-red-500 rounded-md shadow-sm text-sm font-medium text-red-500 hover:bg-red-500/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign Out
+              </button>
+            </div>
           </motion.div>
         </div>
       </div>
