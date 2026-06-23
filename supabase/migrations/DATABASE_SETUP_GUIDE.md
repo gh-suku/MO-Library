@@ -32,6 +32,7 @@ These files must be executed in sequence to set up the complete database:
 | 10 | `step10_insert_sample_books.sql` | Sample programming books with learning paths |
 | 11 | `step11_add_quiz_questions.sql` | Quiz questions for sample books |
 | 12 | `step12_make_user_admin.sql` | Make a specific user an admin |
+| 13 | `step13_prevent_double_booking.sql` | Prevent concurrent seat bookings (race condition fix) |
 
 ### **Query Files (Optional - For Verification)**
 

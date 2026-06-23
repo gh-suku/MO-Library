@@ -16,6 +16,7 @@
 10. `step10_insert_sample_books.sql` - Sample books
 11. `step11_add_quiz_questions.sql` - Quiz questions
 12. `step12_make_user_admin.sql` - ⚠️ **Edit this first!** Add your user ID
+13. `step13_prevent_double_booking.sql` - ⚠️ **IMPORTANT: Bug Fix** - Prevents double booking
 
 ## 📖 Full Documentation
 
@@ -62,6 +63,7 @@ SELECT 'Quiz Questions', COUNT(*) FROM reading_quiz_questions;
 
 ---
 
-**Total Migrations:** 12 steps
+**Total Migrations:** 13 steps
 **Estimated Time:** 5-10 minutes
 **Sample Data:** 18 books, 4 learning paths, 90 quiz questions
+**Bug Fixes:** Double booking prevention ✅

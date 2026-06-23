@@ -30,6 +30,9 @@ Use this checklist to track your migration progress.
 - [ ] **Step 11** - `step11_add_quiz_questions.sql` - 90 questions
 - [ ] **Step 12** - `step12_make_user_admin.sql` - ⚠️ **EDIT FIRST!**
 
+### Phase 5: Bug Fixes
+- [ ] **Step 13** - `step13_prevent_double_booking.sql` - ⚠️ **CRITICAL BUG FIX**
+
 ## Verification
 
 - [ ] Run `query_verify_sample_data.sql` to check everything
