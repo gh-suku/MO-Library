@@ -1,5 +1,52 @@
--- Step 3: Insert relevant programming books and add them to roadmaps
--- This creates proper programming books for each learning path
+-- Step 10: Insert sample books and create learning paths
+-- This creates proper programming books and organizes them into learning paths
+
+-- ============================================
+-- FIRST: Create Learning Paths
+-- ============================================
+
+INSERT INTO learning_paths (id, title, description, category, difficulty_level, estimated_duration_days, is_published)
+VALUES 
+(
+  'c34b63f1-9c4b-4a36-a27a-45c0fd2704ff',
+  'Backend Development Mastery',
+  'Master backend development from fundamentals to advanced concepts. Learn server-side programming, databases, APIs, and scalable architecture.',
+  'Backend Development',
+  'intermediate',
+  120,
+  true
+),
+(
+  'a1bf7e69-f3c1-4950-8968-77b0ba634e54',
+  'Modern Frontend Development',
+  'Become a frontend expert with modern frameworks, responsive design, and best practices. Build beautiful, performant user interfaces.',
+  'Frontend Development',
+  'beginner',
+  90,
+  true
+),
+(
+  '0a554a2a-f0ff-448a-bf4d-b1727190e478',
+  'Full Stack Web Development',
+  'Complete full stack journey covering both frontend and backend. Build end-to-end web applications with modern technologies.',
+  'Full Stack Development',
+  'advanced',
+  180,
+  true
+),
+(
+  '60e7dbb5-f31b-40f8-808a-ada517ef2ca2',
+  'DevOps & Cloud Engineering',
+  'Learn deployment, CI/CD, containerization, and cloud platforms. Master the tools that power modern software delivery.',
+  'DevOps',
+  'intermediate',
+  100,
+  true
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Verify learning paths were created
+SELECT id, title, difficulty_level FROM learning_paths ORDER BY title;
 
 -- ============================================
 -- BACKEND DEVELOPMENT BOOKS
